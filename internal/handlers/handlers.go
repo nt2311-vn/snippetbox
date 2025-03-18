@@ -17,7 +17,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts, err := template.ParseFiles(filepath.Join(htmlStaticDir, "home.html"))
+	files := []string{
+		filepath.Join(htmlStaticDir, "base.html"),
+		filepath.Join(htmlStaticDir, "home.html"),
+	}
+
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Print(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -26,7 +31,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	if err = ts.Execute(w, nil); err != nil {
+	if err = ts.ExecuteTemplate(w, "base", nil); err != nil {
 		log.Print(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
