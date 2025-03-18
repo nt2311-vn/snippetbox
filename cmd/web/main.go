@@ -3,12 +3,17 @@ package main
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/nt2311-vn/snippetbox/internal/handlers"
 )
 
 func main() {
 	mux := http.NewServeMux()
+
+	fileServer := http.FileServer(http.Dir(filepath.Join("ui", "static", "/")))
+
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 	mux.HandleFunc("/", handlers.Home)
 	mux.HandleFunc("/snippet/view", handlers.SnippetView)
 	mux.HandleFunc("/snippet/create", handlers.SnippetCreate)
