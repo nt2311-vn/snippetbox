@@ -9,7 +9,10 @@ import (
 	"text/template"
 )
 
-var htmlStaticDir = filepath.Join("ui", "html", "pages")
+var (
+	htmlStaticDir  = filepath.Join("ui", "html", "pages")
+	htmlPartialDir = filepath.Join("ui", "html", "partials")
+)
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -19,6 +22,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	files := []string{
 		filepath.Join(htmlStaticDir, "base.html"),
+		filepath.Join(htmlPartialDir, "nav.html"),
 		filepath.Join(htmlStaticDir, "home.html"),
 	}
 
