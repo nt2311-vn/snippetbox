@@ -27,8 +27,14 @@ func main() {
 	mux.HandleFunc("/snippet/view", handlers.SnippetView)
 	mux.HandleFunc("/snippet/create", handlers.SnippetCreate)
 
+	server := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
 	infoLog.Printf("Starting server on %s\n", *addr)
-	if err := http.ListenAndServe(*addr, mux); err != nil {
+	if err := server.ListenAndServe(); err != nil {
 		errorLog.Fatalln("error on starting server", err)
 	}
 }
