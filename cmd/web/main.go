@@ -6,9 +6,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/nt2311-vn/snippetbox/internal/handlers"
 )
+
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -21,11 +24,16 @@ func main() {
 		http.Dir(filepath.Join("ui", "static", "/")),
 	})
 
+	app := &application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	mux.HandleFunc("/", handlers.Home)
-	mux.HandleFunc("/snippet/view", handlers.SnippetView)
-	mux.HandleFunc("/snippet/create", handlers.SnippetCreate)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.snippetCreate)
 
 	server := &http.Server{
 		Addr:     *addr,
