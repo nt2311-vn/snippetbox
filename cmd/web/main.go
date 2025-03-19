@@ -12,11 +12,13 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	"github.com/nt2311-vn/snippetbox/internal/models"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -31,9 +33,17 @@ func main() {
 
 	flag.Parse()
 
+	db, err := openDB(*dsn)
+	if err != nil {
+		errorLog.Fatalln("cannot connect to db", err)
+	}
+
+	defer db.Close()
+
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	server := &http.Server{
@@ -41,13 +51,6 @@ func main() {
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
 	}
-
-	db, err := openDB(*dsn)
-	if err != nil {
-		errorLog.Fatalln("cannot connect to db", err)
-	}
-
-	defer db.Close()
 
 	infoLog.Printf("Starting server on %s\n", *addr)
 	if err := server.ListenAndServe(); err != nil {
