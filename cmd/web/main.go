@@ -1,11 +1,17 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"database/sql"
 	"flag"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 type application struct {
@@ -14,11 +20,16 @@ type application struct {
 }
 
 func main() {
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	flag.Parse()
-
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	if err := godotenv.Load(); err != nil {
+		errorLog.Fatalln("cannot read .env  file", err)
+	}
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	dsn := flag.String("dsn", os.Getenv("MYSQL_CONNSTR"), "MySQL data source name")
+
+	flag.Parse()
 
 	app := &application{
 		errorLog: errorLog,
@@ -30,6 +41,13 @@ func main() {
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
 	}
+
+	db, err := openDB(*dsn)
+	if err != nil {
+		errorLog.Fatalln("cannot connect to db", err)
+	}
+
+	defer db.Close()
 
 	infoLog.Printf("Starting server on %s\n", *addr)
 	if err := server.ListenAndServe(); err != nil {
@@ -64,4 +82,41 @@ func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
 	}
 
 	return f, nil
+}
+
+func initTLSConfig() error {
+	certPool := x509.NewCertPool()
+	certFile := filepath.Join("ca.pem")
+
+	pem, err := os.ReadFile(certFile)
+	if err != nil {
+		return err
+	}
+
+	if !certPool.AppendCertsFromPEM(pem) {
+		return err
+	}
+
+	mysql.RegisterTLSConfig("aiven", &tls.Config{
+		RootCAs: certPool,
+	})
+
+	return nil
+}
+
+func openDB(dsn string) (*sql.DB, error) {
+	if err := initTLSConfig(); err != nil {
+		return nil, err
+	}
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
