@@ -18,7 +18,20 @@ type SnippetModel struct {
 }
 
 func (sm *SnippetModel) Insert(title string, content string, expires int) (int, error) {
-	return 0, nil
+	queryFmt := `insert into snippets (title, content, created, expires)
+	values (?, ?, utc_timestamp(), date_add(utc_timestamp(), interval ? day))`
+
+	result, err := sm.DB.Exec(queryFmt, title, content, expires)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (sm *SnippetModel) Get(id int) (*Snippet, error) {
