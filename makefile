@@ -12,12 +12,12 @@ endif
 build:
 	@echo "Building web app..."
 	@go mod tidy
-	@go build -o ./($BIN_DIR)/($APP_NAME)($EXE) ./...
+	@go build -o ./$(BIN_DIR)/$(APP_NAME)$(EXE) ./...
 	@echo "Completed!"
 
 run:
 	@echo "Running web app..."
-	./($BIN_DIR)/($APP_NAME)($EXE)
+	./$(BIN_DIR)/$(APP_NAME)$(EXE)
 
 restart:
 	@echo "Restart web app..."
