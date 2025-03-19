@@ -1,2 +1,4 @@
 bin/
-env/
+.env
+
+snippetbox_queries/
