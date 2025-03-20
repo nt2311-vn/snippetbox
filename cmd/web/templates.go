@@ -22,13 +22,18 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
-		files := []string{
-			filepath.Join(htmlStaticDir, "base.html"),
-			filepath.Join(htmlPartialDir, "nav.html"),
-			page,
+
+		ts, err := template.ParseFiles(filepath.Join(htmlStaticDir, "base.html"))
+		if err != nil {
+			return nil, err
 		}
 
-		ts, err := template.ParseFiles(files...)
+		ts, err = ts.ParseGlob(filepath.Join(htmlPartialDir, "*.html"))
+		if err != nil {
+			return nil, err
+		}
+
+		ts, err = ts.ParseFiles(page)
 		if err != nil {
 			return nil, err
 		}
