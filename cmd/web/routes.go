@@ -14,6 +14,10 @@ func (app *application) routes() http.Handler {
 		http.Dir(filepath.Join("ui", "static", "/")),
 	})
 
+	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.notFound(w)
+	})
+
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
 	router.HandlerFunc(http.MethodGet, "/", app.home)
