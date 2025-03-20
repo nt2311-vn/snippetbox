@@ -3,11 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
-	"text/template"
 
 	"github.com/nt2311-vn/snippetbox/internal/models"
 )
@@ -23,25 +21,35 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		filepath.Join(htmlStaticDir, "base.html"),
-		filepath.Join(htmlPartialDir, "nav.html"),
-		filepath.Join(htmlStaticDir, "home.html"),
-	}
-
-	ts, err := template.ParseFiles(files...)
+	snippets, err := app.snippets.Latest()
 	if err != nil {
-		log.Print(err.Error())
 		app.serverError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
-
-	if err = ts.ExecuteTemplate(w, "base", nil); err != nil {
-		log.Print(err.Error())
-		app.serverError(w, err)
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%+v\n", snippet)
 	}
+
+	// files := []string{
+	// 	filepath.Join(htmlStaticDir, "base.html"),
+	// 	filepath.Join(htmlPartialDir, "nav.html"),
+	// 	filepath.Join(htmlStaticDir, "home.html"),
+	// }
+	//
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	log.Print(err.Error())
+	// 	app.serverError(w, err)
+	// 	return
+	// }
+	//
+	// w.Header().Set("Content-Type", "text/html")
+	//
+	// if err = ts.ExecuteTemplate(w, "base", nil); err != nil {
+	// 	log.Print(err.Error())
+	// 	app.serverError(w, err)
+	// }
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
