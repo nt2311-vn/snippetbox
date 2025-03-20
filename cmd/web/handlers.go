@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -28,23 +27,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		filepath.Join(htmlStaticDir, "base.html"),
-		filepath.Join(htmlPartialDir, "nav.html"),
-		filepath.Join(htmlStaticDir, "home.html"),
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	data := &templateData{Snippets: snippets}
-
-	if err = ts.ExecuteTemplate(w, "base", data); err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, http.StatusOK, "home.html", &templateData{Snippets: snippets})
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -65,25 +48,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{
-		Snippet: snippet,
-	}
-
-	files := []string{
-		filepath.Join(htmlStaticDir, "base.html"),
-		filepath.Join(htmlPartialDir, "nav.html"),
-		filepath.Join(htmlStaticDir, "view.html"),
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	if err = ts.ExecuteTemplate(w, "base", data); err != nil {
-		app.serverError(w, err)
-	}
+	app.render(w, http.StatusOK, "view.html", &templateData{Snippet: snippet})
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
