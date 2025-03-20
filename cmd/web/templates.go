@@ -1,8 +1,8 @@
 package main
 
 import (
+	"html/template"
 	"path/filepath"
-	"text/template"
 
 	"github.com/nt2311-vn/snippetbox/internal/models"
 )
