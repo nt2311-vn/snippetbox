@@ -71,6 +71,10 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := &templateData{
+		Snippet: snippet,
+	}
+
 	files := []string{
 		filepath.Join(htmlStaticDir, "base.html"),
 		filepath.Join(htmlPartialDir, "nav.html"),
@@ -81,10 +85,6 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err)
 		return
-	}
-
-	data := &templateData{
-		Snippet: snippet,
 	}
 
 	if err = ts.ExecuteTemplate(w, "base", data); err != nil {
