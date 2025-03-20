@@ -28,7 +28,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
+		fmt.Fprintf(w, "%+v\n\n", snippet)
 	}
 
 	// files := []string{
