@@ -9,7 +9,7 @@
   </div>
   <div>
     <label>Email:</label>
-    {{with .Form.FieldErrors.name}}
+    {{with .Form.FieldErrors.email}}
     <label class="error">{{.}}</label>
     {{end}}
     <input type="email" name="email" value="{{.Form.Email}}" />
