@@ -141,7 +141,7 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 	)
 	form.CheckField(validator.NotBlank(form.Password), "password", "This field cannot be blank")
 	form.CheckField(
-		validator.MaxChars(form.Password, 8),
+		validator.MinChars(form.Password, 8),
 		"password",
 		"This field must be at least 8 chars long",
 	)
