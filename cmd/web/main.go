@@ -83,7 +83,7 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	infoLog.Printf("Starting server on %s\n", *addr)
+	infoLog.Printf("Starting server on\nhttps:localhpst/%s\n", *addr)
 	if err := server.ListenAndServeTLS(filepath.Join("cert.pem"), filepath.Join("key.pem")); err != nil {
 		errorLog.Fatalln("error on starting server", err)
 	}
