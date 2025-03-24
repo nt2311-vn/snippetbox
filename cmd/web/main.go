@@ -74,7 +74,7 @@ func main() {
 	}
 
 	infoLog.Printf("Starting server on %s\n", *addr)
-	if err := server.ListenAndServe(); err != nil {
+	if err := server.ListenAndServeTLS(filepath.Join("cert.pem"), filepath.Join("key.pem")); err != nil {
 		errorLog.Fatalln("error on starting server", err)
 	}
 }
