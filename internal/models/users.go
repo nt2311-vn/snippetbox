@@ -28,7 +28,7 @@ func (um *UserModel) Insert(name, email, password string) error {
 		return err
 	}
 
-	query := `insert into (name, email, hashed_password, created)
+	query := `insert into users (name, email, hashed_password, created)
 	values (?, ?, ?, utc_timestamp())
 	`
 	_, err = um.DB.Exec(query, name, email, string(hashedPassword))
