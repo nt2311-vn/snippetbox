@@ -27,6 +27,11 @@ type templateData struct {
 }
 
 func (app *application) newTemplateData(r *http.Request) *templateData {
+	app.infoLog.Printf(
+		"%s: authenticated %v",
+		time.Now().Format("02/01/2006 15:04:05"),
+		app.isAuthenticated(r),
+	)
 	return &templateData{
 		CurrentYear:     time.Now().Year(),
 		Flash:           app.sessionManager.PopString(r.Context(), "flash"),
