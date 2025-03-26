@@ -1,15 +1,4 @@
-{{define "nav"}} {{if .IsAuthenticated}}
-<nav>
-  <div>
-    <a href="/">Home</a>
-  </div>
-  <div>
-    <form action="/user/logout" method="post">
-      <button>Logout</button>
-    </form>
-  </div>
-</nav>
-{{else}}
+{{define "nav"}}
 <nav>
   <div>
     <a href="/">Home</a>
@@ -17,6 +6,9 @@
   <div>
     <a href="/user/signup">Signup</a>
     <a href="/user/login">Login</a>
+    <form action="/user/logout" method="post">
+      <button>Logout</button>
+    </form>
   </div>
 </nav>
-{{end}} {{end}}
+{{end}}
