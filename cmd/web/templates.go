@@ -50,7 +50,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		patterns := []string{"html/base.html", "html/partials/*.html", page}
+		patterns := []string{"html/pages/base.html", "html/partials/*.html", page}
 
 		ts, err := template.New(name).
 			Funcs(functions).
